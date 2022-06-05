@@ -1,0 +1,30 @@
+{
+  "name": "smart-hut",
+  "version": "1.0.0",
+  "description": "SmartHut core project",
+  "main": "bin/index.js",
+  "types": "bin/index.d.ts",
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kezziny/node-smart-hut.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kezziny/node-smart-hut/issues"
+  },
+  "homepage": "https://github.com/kezziny/node-smart-hut#readme",
+  "devDependencies": {
+    "typescript": "^4.7.2"
+  },
+  "dependencies": {
+    "reflection": "file:../node-reflection",
+    "rxjs": "^7.5.5"
+  }
+}

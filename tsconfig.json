@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths":{
+    },
+    "target": "es2016",                                  
+    "lib": ["dom", "es6"],                                      
+    "module": "commonjs",                               
+    "rootDir": "src",
+    "declaration": true,                                    
+    "resolveJsonModule": true,                          
+    "allowJs": true,                                     
+    "outDir": "./bin",                                     
+    "esModuleInterop": true,                             
+    "forceConsistentCasingInFileNames": true,           
+    "strict": true,                                      
+    "noImplicitAny": false,                              
+    "strictNullChecks": false,                          
+    "skipLibCheck": true,                                 
+    "experimentalDecorators": true
+  }
+}
