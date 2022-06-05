@@ -1,6 +1,6 @@
 {
-  "name": "smart-hut",
-  "version": "1.0.0",
+  "name": "@kezziny/smart-hut",
+  "version": "1.0.1",
   "description": "SmartHut core project",
   "main": "bin/index.js",
   "types": "bin/index.d.ts",
@@ -24,7 +24,7 @@
     "typescript": "^4.7.2"
   },
   "dependencies": {
-    "reflection": "file:../node-reflection",
+    "@kezziny/reflection": "^1.0.0",
     "rxjs": "^7.5.5"
   }
 }

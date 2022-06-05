@@ -1,4 +1,4 @@
-import { Reflection } from "reflection";
+import { Reflection } from "@kezziny/reflection";
 import { IDeviceConfig, IRoomConfig, ISmartHutConfig } from "./config";
 import { Device, DeviceExtension } from "./Device";
 

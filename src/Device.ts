@@ -1,4 +1,4 @@
-import { IMethodInfo, Reflectable, Reflection } from 'reflection';
+import { IMethodInfo, Reflectable, Reflection } from '@kezziny/reflection';
 import { IDeviceConfig } from './config/IDeviceConfig';
 
 export class Device extends Reflectable {

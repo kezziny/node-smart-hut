@@ -1,4 +1,4 @@
-import { Reflection } from 'reflection';
+import { Reflection } from '@kezziny/reflection';
 import { Observable } from 'rxjs';
 import { Device, DeviceExtension } from './Device';
 import { Interval } from './enums/Interval';
