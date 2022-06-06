@@ -4,6 +4,7 @@ import { Device, DeviceExtension } from "./Device";
 
 export class SmartHut {
 	private static readonly KeyOnConfigured = "SmartHut.Configured";
+	private static readonly KeyCrossBind = "SmartHut.CrossBind";
 	
 	public static Configuration: ISmartHutConfig = null;
 	public static Devices = [];
@@ -76,5 +77,11 @@ export class SmartHut {
 
 	public static OnConfigured(device: Device | DeviceExtension, property: string) {
 		Reflection.SetPropertyMetadata(device, property, SmartHut.KeyOnConfigured, null);
+	}
+
+	public static Bind(args: {Room: string, Name: string, Property: string}) {
+		return function (device: Device, property: string) {
+			Reflection.SetPropertyMetadata(device, property, SmartHut.KeyCrossBind, args);
+		}
 	}
 }

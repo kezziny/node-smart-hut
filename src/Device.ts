@@ -1,5 +1,10 @@
 import { IMethodInfo, Reflectable, Reflection } from '@kezziny/reflection';
+import { SmartHut } from 'Application';
+import { SimpleType } from 'Property';
 import { IDeviceConfig } from './config/IDeviceConfig';
+
+export type DataBindingConverter<T> = (device: Device, data: T) => SimpleType | string
+export type DataPublishingConverter = (device: Device, rpoperty: string) => SimpleType | string
 
 export class Device extends Reflectable {
 	private static readonly KeyOnConfigured = "Device.OnConfigured";
@@ -7,6 +12,10 @@ export class Device extends Reflectable {
 	public Extensions: DeviceExtension[] = [];
 	public Configuration: IDeviceConfig = null;
 
+	public constructor() {
+		super();
+		SmartHut.Devices.push(this);
+	}
 
 	public Configure(config: IDeviceConfig) {
 		console.log("Configuring device");
@@ -29,9 +38,14 @@ export class Device extends Reflectable {
 		return methods;
 	}
 
-	public ExecuteCallback(callback, ...args: any[]): void {
-		if (typeof callback === "string") this[callback](...args);
-		else callback(this, ...args);
+	public ExecuteBindingCallback<T>(callback: DataBindingConverter<T>, data: T): void {
+		if (typeof callback === "string") this[callback as string](data);
+		else callback(this, data);
+	}
+
+	public ExecutePublishingCallback(callback: DataPublishingConverter, property: string): SimpleType {
+		if (typeof callback === "string") return this[callback as string](property);
+		else return callback(this, property);
 	}
 
 	public static OnConfigured(device: Device | DeviceExtension, property: string) {

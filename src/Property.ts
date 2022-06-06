@@ -1,5 +1,5 @@
 import { Reflection } from '@kezziny/reflection';
-import { Observable } from 'rxjs';
+import { Observable, Subscriber } from 'rxjs';
 import { Device, DeviceExtension } from './Device';
 import { Interval } from './enums/Interval';
 import { Unit } from './enums/Unit';
@@ -7,7 +7,7 @@ import { Unit } from './enums/Unit';
 
 
 
-type SimpleType = number | boolean | string;
+export type SimpleType = number | boolean | string;
 
 interface IPropertyContent<T extends SimpleType> {
 	value: T;
@@ -33,6 +33,9 @@ export class PropertyChangeEventArgs {
 export class Property<T extends number | boolean | string> {
 	private static readonly OnPropertyChangingKey = "OnPropertyChanging";
 	private static readonly OnPropertyChangedKey = "OnPropertyChanged";
+
+	Subscriber: Subscriber<PropertyChangeEventArgs>;
+	Observable = new Observable<PropertyChangeEventArgs>(subscriber => this.Subscriber = subscriber);
 
 	private static HourlyTickObserver;
 	private static HourlyTick = new Observable<Date>((observer) => Property.HourlyTickObserver = observer);
@@ -80,6 +83,11 @@ export class Property<T extends number | boolean | string> {
 		if (eventArgs.To === null) return;
 		this._Value = eventArgs.To;
 		this.CallMethodsWithMetadata(Property.OnPropertyChangedKey, eventArgs);
+		this.Subscriber?.next(eventArgs);
+	}
+
+	public get OnUpdated(): Observable<PropertyChangeEventArgs> {
+		return this.Observable;
 	}
 
 	private CallMethodsWithMetadata(key: string, eventArgs: PropertyChangeEventArgs): void {
