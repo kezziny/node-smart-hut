@@ -1,23 +1,31 @@
 import { IMethodInfo, Reflectable, Reflection } from '@kezziny/reflection';
-import { SmartHut } from 'Application';
+import { SmartHut } from 'SmartHut';
 import { SimpleType } from 'Property';
-import { IDeviceConfig } from './config/IDeviceConfig';
 
-export type DataBindingConverter<T> = (device: Device, data: T) => SimpleType | string
-export type DataPublishingConverter = (device: Device, rpoperty: string) => SimpleType | string
+export type DataBindingConverter<T> = (device: Device<any>, data: T) => SimpleType | string
+export type DataPublishingConverter = (device: Device<any>, property: string) => SimpleType | string
 
-export class Device extends Reflectable {
+export interface IDeviceConfig
+{
+	[key: string]: any;
+	
+	Home: string;
+	Name: string;
+	Room: string;
+}
+
+export class Device<T> extends Reflectable {
 	private static readonly KeyOnConfigured = "Device.OnConfigured";
 
 	public Extensions: DeviceExtension[] = [];
-	public Configuration: IDeviceConfig = null;
+	public Configuration: T = null;
 
 	public constructor() {
 		super();
 		SmartHut.Devices.push(this);
 	}
 
-	public Configure(config: IDeviceConfig) {
+	public Configure(config: T) {
 		console.log("Configuring device");
 
 
@@ -48,16 +56,16 @@ export class Device extends Reflectable {
 		else return callback(this, property);
 	}
 
-	public static OnConfigured(device: Device | DeviceExtension, property: string) {
+	public static OnConfigured(device: Device<any> | DeviceExtension, property: string) {
 		Reflection.SetPropertyMetadata(device, property, Device.KeyOnConfigured, null);
 	}
 }
 
 export class DeviceExtension extends Reflectable {
-	protected Device: Device;
+	protected Device: Device<any>;
 	protected Configuration: IDeviceConfig = null;
 
-	public constructor(device: Device) {
+	public constructor(device: Device<any>) {
 		super();
 		this.Device = device;
 	}
