@@ -17,6 +17,9 @@
     "noImplicitAny": false,                              
     "strictNullChecks": false,                          
     "skipLibCheck": true,                                 
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "plugins": [
+      { "name": "typescript-tslint-plugin" }
+    ]
   }
 }

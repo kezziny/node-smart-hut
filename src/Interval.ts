@@ -1,5 +1,4 @@
-export enum Interval
-{
+export enum Interval{
 	Never,
 	Hourly,
 	Daily,

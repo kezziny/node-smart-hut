@@ -1,0 +1,41 @@
+{
+    "extends": "tslint:recommended",
+    "rules": {
+        "max-classes-per-file": false,
+
+        "class-name": true,
+        "interface-name": true,
+        "file-name-casing": [true, "pascal-case"],
+        "prefer-method-signature": true,
+
+        "no-consecutive-blank-lines": true,
+        "newline-before-return": true,
+        "no-trailing-whitespace": true,
+
+        "object-literal-key-quotes": [true, "consistent-as-needed"],
+        "one-variable-per-declaration": true,
+        "prefer-template": [true, "allow-single-concat"],
+        "space-before-function-paren": true,
+        "align": [true, "parameters", "statements"],
+        "import-spacing": true,
+        "quotemark": [true, "single", "avoid-escape", "avoid-template"],
+        "one-line": [true, "check-open-brace"],
+        "curly": [true, "ignore-same-line"],
+
+        "newline-per-chained-call": true,
+
+        "new-parens": true,
+        "only-arrow-functions": true,
+        "no-unnecessary-callback-wrapper": true,
+        "arrow-parens": true,
+        "arrow-return-shorthand": true,
+
+        "no-arg": true,
+        "no-bitwise": true,
+        "no-conditional-assignment": true,
+        "no-console": {
+            "severity": "warning",
+            "options": ["debug", "info", "log", "time", "timeEnd", "trace"]
+        }
+    }
+}

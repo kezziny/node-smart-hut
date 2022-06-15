@@ -1,86 +1,43 @@
-import { PropertyChangeEventArgs } from 'Property';
-import { WebSocketServer, WebSocket } from 'ws';
+import { Mqtt, MqttPackage } from './extensions/mqtt';
+import { filter } from 'rxjs';
+import { Device } from './device';
+import { PropertyChangeEventArgs } from 'property';
 
-import { Device, DeviceExtension } from "./Device";
-
-interface WSEvent {
-	Device: {
-		Home: string;
-		Room: string;
-		Name: string;
-	}
-
+interface IEvent
+{
 	Property: string;
 	Event: string;
-
 	To: any;
 }
 
-export class SmartHut {	
-	public static Devices: Device<any>[] = [];
+export class SmartHut
+{
+	public static Sync(): void
+	{
+		Device.Devices.forEach((device) =>
+		{
+			Mqtt.Global.Topic(`${Mqtt.Global.Configuration.RootTopic}/${device.ID}/events`, true).Subscribe((pkg: MqttPackage) =>
+			{
+				const event: IEvent = pkg.payload;
+				if (!device.hasOwnProperty(event.Property)) return;
+				device[event.Property].SyncTo(event.To);
 
+			});
 
-	public static Serve(): void {
-		const server = new WebSocketServer({ port: 8080 });
-		server.on('connection', (client) => {
-			client.on('message', (event: WSEvent) => {
-				SmartHut.ProcessEvent(event);
-				server.clients.forEach(target => {
-					if (target === client) return;
-					target.send(event);
-				});
-			});		  
-		  });
-		
-		
-		this.Devices.forEach(device => {
-			device.GetProperties()
-				.filter(property => property?.constructor?.name === "Property")
-				.forEach(property => {
-					device[property].OnChanged.subscribe((event) => server.clients.forEach(target => target.send(SmartHut.EventToWS(event, "OnChanged"))));
-				});
-		});
-	}
-
-	public static Connect(ip: string): void {
-		const client = new WebSocket('ws://' + ip);
-		
-		client.on('message', (event) => SmartHut.ProcessEvent(event));
-
-		this.Devices.forEach(device => {
-			device.GetProperties()
-				.filter(property => property?.constructor?.name === "Property")
-				.forEach(property => {
-					device[property].OnCommand.subscribe((event) => client.send(SmartHut.EventToWS(event, "OnCommand")));
+			device.GetProperties().filter((property) => device[property]?.constructor?.name === 'Property')
+				.forEach((property) =>
+				{
+					device[property].OnChanged.Subscribe((event: PropertyChangeEventArgs) =>
+					{
+						if (event.EventSource !== 'local') return;
+						Mqtt.Global.Publish(`${Mqtt.Global.Configuration.RootTopic}/${device.ID}/events`, { Property: property, Event: 'OnChanged', To: event.To });
+					});
+					device[property].OnCommand.Subscribe((event: PropertyChangeEventArgs) =>
+					{
+						if (event.EventSource !== 'local') return;
+						Mqtt.Global.Publish(`${Mqtt.Global.Configuration.RootTopic}/${device.ID}/events`, { Property: property, Event: 'OnCommand', To: event.To });
+					});
 				});
 		});
-	}
-
-	private static ProcessEvent(event: WSEvent): void {
-		SmartHut.Devices
-		.filter(device => device.Configuration.Home === event.Device.Home && device.Configuration.Room === event.Device.Room && device.Configuration.Name === event.Device.Name)
-		.forEach(device => {
-			switch(event.Event) {
-				case "OnChanged": device[event.Property].Bound(event.To); break;
-				case "OnCommand": device[event.Property].Command(event.To); break;
-			}
-		});
-	}
-
-	private static EventToWS(event: PropertyChangeEventArgs, type: string): WSEvent {
-		let wsEvent: WSEvent = {
-			Device: {
-				Home: event.Device.Configuration.Home,
-				Room: event.Device.Configuration.Room,
-				Name: event.Device.Configuration.Name,
-			},
-
-			Property: event.Property,
-			Event: type,
-
-			To: event.To
-		};
-
-		return wsEvent;
 	}
 }
